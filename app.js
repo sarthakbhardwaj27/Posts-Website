@@ -39,9 +39,11 @@ app.get('/logout',(req,res)=>{
   res.redirect('/login')
 })
 
-app.get('/profile',isLoggedIn,(req,res)=>{
+app.get('/profile',isLoggedIn, async (req,res)=>{
   // console.log(req.user)
-  res.render('profile', {username:req.user.username})
+  let user = await userModel.findOne({email: req.user.email}).populate("posts");
+  // console.log(posts)
+  res.render('profile', {user})
 })
 
 // POST ROUTES
@@ -104,7 +106,7 @@ app.post('/createpost',isLoggedIn,async (req,res)=>{
   // console.log(req.body)
   const postData = req.body.postData;
   const user = await userModel.findOne({email: req.user.email})
-  let post = postModel.create({
+  let post = await postModel.create({
     userId: user._id,
     username: user.username,
     content: postData,
