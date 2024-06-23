@@ -20,7 +20,7 @@ function isLoggedIn(req,res,next){
   if(req.cookies.token === '')  res.send("You must be logged in to access this page");
   else{
     let data = jwt.verify(req.cookies.token, "secretkey");
-    req.user = data;
+    req.user = data; //we are adding the data into req so that it can be retrieved later on
     // console.log(`This is Jwt data: ${data}`)
   }
   next();
@@ -71,7 +71,7 @@ app.post('/register', async (req,res)=>{
       let token = jwt.sign({
         email: email, 
         userid: user._id,
-        username: username
+        username: username //added username so that we can use ejs to populate the username in profile page
       }, "secretkey");
       res.cookie('token', token);
       // res.render('login');
@@ -100,8 +100,17 @@ app.post('/login',async (req,res)=>{
   });
 })
 
-app.post('/createpost',(req,res)=>{
-  console.log(req.body)
+app.post('/createpost',isLoggedIn,async (req,res)=>{
+  // console.log(req.body)
+  const postData = req.body.postData;
+  const user = await userModel.findOne({email: req.user.email})
+  let post = postModel.create({
+    userId: user._id,
+    username: user.username,
+    content: postData,
+  })
+  user.posts.push(post._id);
+  await user.save();
   res.redirect('/profile')
 })
 

@@ -13,9 +13,19 @@
     </div>
     <h3 class="text-3xl mb-5 mt-5">Hello, <%= username %> 👋</h3>
     <form action="/createpost" method="post">
-      <textarea class="px-3 py-2 rounded-md outline-none bg-transparent border-2 border-zinc-800 block" placeholder="What's on your mind?" name="name" rows="4" cols="50"></textarea>
+      <textarea class="px-3 py-2 rounded-md outline-none bg-transparent border-2 border-zinc-800 block" placeholder="What's on your mind?" name="postData" rows="4" cols="80"></textarea>
       <input class = "px-3 py-2  rounded-md outline-none bg-blue-500 border-2 border-zinc-800 mt-5" type="submit" value="Create Post">
     </form>
+    <div class="posts">
+      <h3 class="text-3xl mb-5 mt-5">Your Posts</h3>
+      <div id="postcontainer">
+        <div class="post w-1/3 p-5 border-2 border-zinc-700 bg-zinc-800 rounded-md">
+          <h4 class="mb-2 text-xl text-blue-500">@username</h4>
+          <p class="text-sm tracking-tight">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas excepturi ea nobis minus est inventore eum a blanditiis ipsam libero provident, dolorum magnam odio sint earum eius magni! Mollitia, beatae!</p>
+          <input class = "px-3 py-2 bg-red-500 rounded-md outline-none bg-red-500 border-2 border-zinc-800 mt-5" type="submit" value="Delete Post">
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
