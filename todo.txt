@@ -1,6 +1,6 @@
-1. users should be able to write posts
-2. login and register
-3. logout
-4. post creation
-5. post like
-6. post delete
+1. users should be able to write posts -> done
+2. login and register -> done
+3. logout -> done 
+4. post creation -> done 
+5. post like -> pending
+6. post delete -> pending
