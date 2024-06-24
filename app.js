@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+
 // MIDDLEWARES
 //creating a middleware for protected routes
 function isLoggedIn(req,res,next){
@@ -28,7 +29,7 @@ function isLoggedIn(req,res,next){
 
 // GET ROUTES
 app.get('/', (req, res) => {
-  res.render('index')
+  res.render('home')
 })
 
 app.get('/login',(req,res)=>{
@@ -36,7 +37,7 @@ app.get('/login',(req,res)=>{
 })
 app.get('/logout',(req,res)=>{
   res.cookie('token',"");
-  res.redirect('/login')
+  res.redirect('/')
 })
 
 app.get('/profile',isLoggedIn, async (req,res)=>{
@@ -46,13 +47,21 @@ app.get('/profile',isLoggedIn, async (req,res)=>{
   res.render('profile', {user})
 })
 
+app.get('/deletepost/:id', async (req,res)=>{
+  console.log(req.params.id)
+  let post = await postModel.findOneAndDelete({_id: req.params.id});
+  console.log(post)
+  res.redirect('/profile')
+  // console.log(post);
+})
+
 // POST ROUTES
 
 app.post('/register', async (req,res)=>{
   let {email,username,password,name} = req.body;
   let user = await userModel.findOne({email});
   if(user) {
-    return res.status(500).render('User already registered')
+    return res.status(500).send('User already exists');
   }
   bcrypt.genSalt(10, (err,salt)=>{
     if(err)
@@ -86,7 +95,7 @@ app.post('/login',async (req,res)=>{
   let {email, password} = req.body;
   let user = await userModel.findOne({email});
   if(!user){
-    res.status(500).send("Something went wrong")
+    res.status(500).redirect('/')
   }
   bcrypt.compare(password, user.password, (err,result)=>{
     if(result){
