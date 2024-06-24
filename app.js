@@ -55,6 +55,25 @@ app.get('/deletepost/:id', async (req,res)=>{
   // console.log(post);
 })
 
+app.get('/editpost/:id',isLoggedIn, async (req,res)=>{
+  let post = await postModel.findOne({_id: req.params.id});
+  let user = await userModel.findOne({email: req.user.email})
+  res.render('editpost',{user, post})
+  // console.log(post);
+})
+
+app.post('/updatepost/:id', async (req,res)=>{
+  let {postData} = req.body;
+  console.log(postData)
+  console.log(req.params.id)
+  // let deletepost = await postModel.findOneAndDelete({_id: req.params.id});
+  let post = await postModel.findOneAndUpdate({_id: req.params.id}, {content: postData});
+  if (!post) {
+    return res.status(404).send('Post not found');
+  }
+  console.log('Updated Post:', post);
+  res.redirect('/profile')
+})
 // POST ROUTES
 
 app.post('/register', async (req,res)=>{
