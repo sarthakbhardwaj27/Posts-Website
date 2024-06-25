@@ -17,14 +17,27 @@ app.use(cookieParser());
 // MIDDLEWARES
 //creating a middleware for protected routes
 function isLoggedIn(req,res,next){
-  //console.log(req.cookies.token);
-  if(req.cookies.token === '')  res.send("You must be logged in to access this page");
-  else{
-    let data = jwt.verify(req.cookies.token, "secretkey");
-    req.user = data; //we are adding the data into req so that it can be retrieved later on
-    // console.log(`This is Jwt data: ${data}`)
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).send("You must be logged in to access this page");
   }
-  next();
+
+  try {
+    const data = jwt.verify(token, "secretkey");
+    req.user = data;
+    console.log(`This is JWT data:`, JSON.stringify(req.user));
+    next();
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).send('Token expired');
+    } else if (error.name === 'JsonWebTokenError') {
+      return res.status(401).send('Invalid token');
+    } else {
+      console.error('JWT verification error:', error);
+      return res.status(500).send('Internal Server Error');
+    }
+  }
 }
 
 // GET ROUTES
@@ -62,18 +75,33 @@ app.get('/editpost/:id',isLoggedIn, async (req,res)=>{
   // console.log(post);
 })
 
-app.post('/updatepost/:id', async (req,res)=>{
-  let {postData} = req.body;
-  console.log(postData)
-  console.log(req.params.id)
-  // let deletepost = await postModel.findOneAndDelete({_id: req.params.id});
-  let post = await postModel.findOneAndUpdate({_id: req.params.id}, {content: postData});
-  if (!post) {
-    return res.status(404).send('Post not found');
+app.get('/likepost/:id',async (req,res)=>{
+  try {
+    let post = await postModel.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+    
+    // Ensure req.user contains the user ID
+    let userId = req.user; // Assuming userid is the field name in your JWT payload
+    console.log(JSON.stringify(userId))
+    // Check if the user has already liked the post
+    if (!post.likes.includes(userId)) {
+      post.likes.push(userId);
+      await post.save();
+    }
+     else {
+      post.likes.splice(userId);
+      await post.save();
+    }
+
+    res.redirect('/profile');
+  } catch (error) {
+    console.error('Error liking post:', error);
+    res.status(500).send('Internal Server Error');
   }
-  console.log('Updated Post:', post);
-  res.redirect('/profile')
 })
+
 // POST ROUTES
 
 app.post('/register', async (req,res)=>{
@@ -144,6 +172,18 @@ app.post('/createpost',isLoggedIn,async (req,res)=>{
   res.redirect('/profile')
 })
 
+app.post('/updatepost/:id', async (req,res)=>{
+  let {postData} = req.body;
+  // console.log(postData)
+  // console.log(req.params.id)
+  // let deletepost = await postModel.findOneAndDelete({_id: req.params.id});
+  let post = await postModel.findOneAndUpdate({_id: req.params.id}, {content: postData});
+  if (!post) {
+    return res.status(404).send('Post not found');
+  }
+  console.log('Updated Post:', post);
+  res.redirect('/profile')
+})
 // SERVER LISTENING
 app.listen(port, ()=>{
   console.log(`listening on port: ${port}`)

@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const postSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
+    ref: 'User'
   },
   username: String,
   content: String,
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
+      ref: 'User'
     }
   ]
 },{timestamps: true})

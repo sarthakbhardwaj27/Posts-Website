@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home Page</title>
+  <link href="https://cdn.remixicon.com/releases/v1.2.2/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
   <div class=" w-full min-h-screen bg-zinc-900 text-white p-10">
     <div class="flex justify-end">
@@ -13,8 +17,10 @@
     </div>
     <h3 class="text-3xl mb-5 mt-5">Hello, <%= user.username %> 👋</h3>
     <form action="/createpost" method="post">
-      <textarea class="px-3 py-2 rounded-md outline-none bg-transparent border-2 border-zinc-800 block" placeholder="What's on your mind?" name="postData" rows="4" cols="80"></textarea>
-      <input class = "px-3 py-2  rounded-md outline-none bg-blue-500 border-2 border-zinc-800 mt-5" type="submit" value="Create Post">
+      <textarea class="px-3 py-2 rounded-md outline-none bg-transparent border-2 border-zinc-800 block"
+        placeholder="What's on your mind?" name="postData" rows="4" cols="80"></textarea>
+      <input class="px-3 py-2  rounded-md outline-none bg-blue-500 border-2 border-zinc-800 mt-5" type="submit"
+        value="Create Post">
     </form>
     <div class="posts">
       <h3 class="text-3xl mb-5 mt-5">Your Posts</h3>
@@ -22,16 +28,30 @@
         <% user.posts.reverse().forEach(function(post){ %>
           <div class="post w-full max-w-96 p-5 border-2 border-zinc-700 bg-zinc-800 rounded-md mt-5">
             <div class="flex justify-between items-center">
-              <h4 class="text-xl text-blue-500">@<%= user.username %></h4>
-              <h6 class="text-xs text-zinc-600"><%= post.createdAt.toLocaleString() %></h6>
+              <h4 class="text-xl text-blue-500">@<%= user.username %>
+              </h4>
+              <h6 class="text-xs text-zinc-600">
+                <%= post.createdAt.toLocaleString() %>
+              </h6>
             </div>
-            <p class="text-sm tracking-tight mt-2"><%= post.content %></p>
-            <button class = "px-3 py-2 bg-red-500 rounded-md outline-none bg-red-500 border-2 border-zinc-800 mt-5 text-sm tracking-tight"><a href="/deletepost/<%= post._id %>">Delete Post</a></button>
-            <button class = "px-3 py-2 text-zinc-400 rounded-md outline-none border-2 border-zinc-800 mt-5 text-sm tracking-tight"><a href="/editpost/<%= post._id %>">Edit Post ✏️</a></button>
+            <p class="text-sm tracking-tight mt-2">
+              <%= post.content %>
+            </p>
+            <button
+              class="px-3 py-2 text-zinc-400 rounded-md outline-none border-2 border-zinc-800 mt-5 text-sm tracking-tight"><a
+                href="/likepost/<%= post._id %>"><i class="ri-heart-line" style="font-size: 18px;"> <%= post.likes.length %></i>
+              </a></button>
+            <button
+              class="px-3 py-2 text-zinc-400 rounded-md outline-none border-2 border-zinc-800 mt-5 text-sm tracking-tight"><a
+                href="/editpost/<%= post._id %>">Edit Post ✏️</a></button>
+            <button
+              class="px-3 py-2 bg-red-500 rounded-md outline-none bg-red-500 border-2 border-zinc-800 mt-5 text-sm tracking-tight"><a
+                href="/deletepost/<%= post._id %>">Delete Post</a></button>
           </div>
-        <% }) %>
+          <% }) %>
       </div>
     </div>
   </div>
 </body>
+
 </html>
